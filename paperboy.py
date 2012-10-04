@@ -467,8 +467,8 @@ if __name__ == '__main__':
                 month = now.month - 1
                 year = now.year if now.month != 12 else now.year - 1
                 
-                #setattr(namespace, 'end_month', month)
-                #setattr(namespace, 'end_year', year)
+                setattr(namespace, 'end_month', month)
+                setattr(namespace, 'end_year', year)
                 
             elif values == "this":
                 now = datetime.now()

@@ -1,5 +1,15 @@
-# Paperboy written by Andy Casey (acasey@mso.anu.edu.au)
-# Please contact me before distributing or editing any of this code for uses which it was not intended for.
+# Paperboy written by Andy Casey, acasey@mso.anu.edu.au
+# http://astrowizici.st
+
+# Change these for a given institute
+HOST = "mso.anu.edu.au"
+FROM_ADDRESS = "Paperboy"
+ADMIN_ADDRESS = "arcasey@mit.edu"
+INSTITUTE_QUERY = [
+    "*mount stromlo observatory*", # or
+    "*research school of astronomy and astrophysics*"
+]
+# Don't change anything past here unless you're a Python wizard.
 
 import logging
 from datetime import datetime
@@ -25,17 +35,6 @@ from email.Utils import formatdate
 
 from pyPdf import PdfFileReader, PdfFileWriter
 
-# GLOBAL VARIABLES
-# Change these for a given institute
-HOST = "outgoing.mso.anu.edu.au"
-FROM_ADDRESS = "acasey@mso.anu.edu.au"
-ADMIN_ADDRESS = "arcasey@mit.edu"
-INSTITUTE_QUERY = [
-    "*mount stromlo observatory*",
-    "*research school of astronomy and astrophysics*"
-]
-
-# Don't change anything past here unless you're a Python wizard.
 
 def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=120):
     """Retrieves the bibliography codes and URLS for all peer-reviewed articles
@@ -331,7 +330,7 @@ def email_article_summary(to_address, summary_filename, start_year, start_month,
     body = """
             Good morning,
     
-            There were %i peer-reviewed papers produced by researchers at the Research School of Astronomy & Astrophysics between %i/%i and %i/%i. A summary file containing the front page from each article is attached with this email. Please print out these summary pages, highlight the RSAA author(s) on each article and pin them to the monthly papers noticeboard.
+            There were %i peer-reviewed papers produced by researchers at this institute between %i/%i and %i/%i. A summary file containing the front page from each article is attached with this email. Please print out these summary pages, highlight the author(s) on each article and pin them to the monthly papers noticeboard.
             
             Thanks a bunch,
             
@@ -434,6 +433,9 @@ def report_monthly_papers(email_address, start_year, start_month, end_year, end_
 
 if __name__ == '__main__':
     
+    print __file__
+    print os.path.dirname(__file__)
+    
     import argparse
     
     class LastMonthAction(argparse.Action):
@@ -469,8 +471,8 @@ if __name__ == '__main__':
                 month = now.month - 1
                 year = now.year if now.month != 12 else now.year - 1
                 
-                setattr(namespace, 'end_month', month)
-                setattr(namespace, 'end_year', year)
+                #setattr(namespace, 'end_month', month)
+                #setattr(namespace, 'end_year', year)
                 
             elif values == "this":
                 now = datetime.now()

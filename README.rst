@@ -1,0 +1,52 @@
+=======
+Paperboy
+=======
+
+:Info: See `github <http://github.com/andycasey/paperboy>`_ for the latest source
+:Author: Andy <acasey@mso.anu.edu.au>
+
+Paperboy is a script that will find peer-reviewed papers published by
+authors at a given institute in a given timeframe. A summary report
+including the first page of each article is produced, which can be emailed
+to someone on the first month so that new papers can be published on an
+institute noticeboard.
+
+Requirements
+------------
+
+- Python 
+
+- `PyPdf <http://pybrary.net/pyPdf/>`_
+
+Installation
+------------
+No installation required, but you may want to edit the file so that you're
+finding papers for your own institute. Right now it's set to find papers
+published by anyone from ``*Mount Stromlo Observatory*`` or ``*Research
+School of Astronomy and Astrophysics*``, at the `Australian National
+University <http://rsaa.anu.edu.au/`_
+
+See the top of the paperboy.py code for more details.
+
+Usage Examples
+--------------
+
+- Create a summary report for all the papers that were published last month.
+
+  ``python paperboy.py --to my@email.com --month last``
+
+- Email a summary report for all the papers that have been published this
+  month:
+
+  ``python paperboy.py --to my@email.com --month this``
+
+- Email a summary report for all the papers published between 8/2011 and
+  4/2012
+
+  ``python paperboy.py --to my@email.com --month 8 --year 2011 --end_month
+  4 --end_year 2012``
+
+- More options are available, and help is found by using:
+
+  ``python paperboy.py --help``
+

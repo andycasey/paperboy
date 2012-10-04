@@ -39,14 +39,6 @@ Feel free to change the following lines in paperboy.py:
 
 Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email too.
 
-```javascript
-function fancyAlert(arg) {
-  if(arg) {
-    $.facebox({div:'#foo'})
-  }
-}
-```
-
 Usage Examples
 --------------
 
@@ -68,4 +60,26 @@ Usage Examples
 - More options are available, and help is found by using:
 
   ``python paperboy.py --help``
+
+Set up a Cron job
+-----------------
+At the `Research School of Astronomy and Astrophysics, ANU
+<http://rsaa.anu.edu.au/>`_ we have an automatic cron job on the system
+which finds new peer-reviewed papers for the previous month on the first
+of each month. You just need someone to volunteer to print out the summary
+pages and pin them up on some common noticeboard. In this case let's call
+that person 'Louise'. First, follow `these instructions
+<http://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/>`_
+and when I do ``crontab -l`` in a terminal I get the following output:
+
+::
+acasey@moron:/home/acasey>crontab -l
+# m h  dom mon dow   command
+0 7 1 * * python /home/acasey/paperboy/paperboy.py --month=last --to=the_louise@mso.anu.edu.au --interval=10 --repeat=10
+::
+
+So you can see at 7 am on the first of every month, Louise will get
+a summary email for all the papers published in the last month.
+
+Note: Louise does this at ANU, and we're thankful. To limit spam, that's not her real email address :-)
 

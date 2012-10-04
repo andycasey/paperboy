@@ -24,9 +24,22 @@ No installation required, but you may want to edit the file so that you're
 finding papers for your own institute. Right now it's set to find papers
 published by anyone from ``*Mount Stromlo Observatory*`` or ``*Research
 School of Astronomy and Astrophysics*``, at the `Australian National
-University <http://rsaa.anu.edu.au/`_
+University <http://rsaa.anu.edu.au/>`_
 
-See the top of the paperboy.py code for more details.
+Feel free to change the following lines in paperboy.py:
+
+- ``HOST = "mso.anu.edu.au"``
+
+- ``FROM_ADDRESS = "Paperboy"``
+
+- ``ADMIN_ADDRESS = "acasey@mso.anu.edu.au"``
+  Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email
+  too.
+
+- ``INSTITUTE_QUERY = [
+    "*mount stromlo observatory*", # or
+    "*research school of astronomy and astrophysics*"
+    ]``
 
 Usage Examples
 --------------

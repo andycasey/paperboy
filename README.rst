@@ -82,3 +82,10 @@ a summary email for all the papers published in the last month.
 
 Note: Louise does this at ANU, and we're thankful. To limit spam, that's not her real email address :-)
 
+Important Notes
+---------------
+Although NASA ADS is free to search, this script will go and retrieve
+articles wherever it can. If a published version of the paper is
+unavailable it will use arXiv pre-prints instead if available. However, it
+does assume that you are using this code from an institutional site and
+that you have access to all of the online astronomy journals.

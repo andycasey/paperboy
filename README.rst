@@ -71,11 +71,10 @@ pages and pin them up on some common noticeboard. In this case let's call
 that person 'Louise'. First, follow `these instructions
 <http://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/>`_
 and when I do ``crontab -l`` in a terminal I get the following output:
-
 ::
-    acasey@magnificet:/home/acasey>crontab -l
+    acasey@magnificent:/home/acasey>crontab -l
     # m h  dom mon dow   command
-    0 7 1 * * python /home/acasey/paperboy/paperboy.py --month=last --to=the_louise@mso.anu.edu.au --interval=10 --repeat=10
+    0 7 1 * * python /home/acasey/paperboy/paperboy.py --month last --to the_louise@mso.anu.edu.au --interval 10 --repeat 10
 ::
 
 So you can see at 7 am on the first of every month, Louise will get

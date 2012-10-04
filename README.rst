@@ -3,7 +3,7 @@ Paperboy
 =======
 
 :Info: See `github <http://github.com/andycasey/paperboy>`_ for the latest source
-:Author: Andy acasey@mso.anu.edu.au
+:Author: Andy Casey, acasey@mso.anu.edu.au
 
 Paperboy is a script that will find peer-reviewed papers published by
 authors at a given institute in a given timeframe. A summary report

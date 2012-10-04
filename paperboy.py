@@ -4,7 +4,7 @@
 # Change these for a given institute
 HOST = "mso.anu.edu.au"
 FROM_ADDRESS = "Paperboy"
-ADMIN_ADDRESS = "arcasey@mit.edu"
+ADMIN_ADDRESS = "acasey@mso.anu.edu.au"
 INSTITUTE_QUERY = [
     "*mount stromlo observatory*", # or
     "*research school of astronomy and astrophysics*"
@@ -12,10 +12,6 @@ INSTITUTE_QUERY = [
 # Don't change anything past here unless you're a Python wizard.
 
 import logging
-from datetime import datetime
-
-logging.basicConfig(filename=datetime.now().strftime('%Y-%m-%d_%H:%M:%S.log'), filemode='w', level=logging.DEBUG)
-
 import os
 import re
 import urllib2
@@ -26,7 +22,7 @@ import time
 import traceback
 
 from calendar import monthrange
-
+from datetime import datetime
 from email import Encoders
 from email.MIMEBase import MIMEBase
 from email.MIMEMultipart import MIMEMultipart
@@ -34,6 +30,8 @@ from email.MIMEText import MIMEText
 from email.Utils import formatdate
 
 from pyPdf import PdfFileReader, PdfFileWriter
+
+logging.basicConfig(filename=os.path.join(os.path.dirname(__file__), datetime.now().strftime('%Y-%m-%d_%H:%M:%S.log')), filemode='w', level=logging.DEBUG)
 
 
 def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=120):
@@ -419,7 +417,8 @@ def report_monthly_papers(email_address, start_year, start_month, end_year, end_
     else:
         end_month = int(end_month)
     
-    folder = '%s-%s_%s-%s' % (start_year, start_month, end_year, end_month, )
+    folder = os.path.join(os.path.dirname(__file__), '%s-%s_%s-%s' \
+                          % (start_year, start_month, end_year, end_month, ))
     if not os.path.exists(folder):
         os.system('mkdir %s' % (folder, ))    
     
@@ -432,9 +431,6 @@ def report_monthly_papers(email_address, start_year, start_month, end_year, end_
 
 
 if __name__ == '__main__':
-    
-    print __file__
-    print os.path.dirname(__file__)
     
     import argparse
     

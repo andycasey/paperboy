@@ -73,7 +73,7 @@ that person 'Louise'. First, follow `these instructions
 and when I do ``crontab -l`` in a terminal I get the following output:
 
 ::
-    acasey@moron:/home/acasey>crontab -l
+    acasey@magnificent:/home/acasey>crontab -l
     # m h  dom mon dow   command
     0 7 1 * * python /home/acasey/paperboy/paperboy.py --month=last --to=the_louise@mso.anu.edu.au --interval=10 --repeat=10
 ::

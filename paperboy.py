@@ -424,9 +424,9 @@ def report_monthly_papers(email_address, start_year, start_month, end_year, end_
     
     article_list = retrieve_article_urls(start_year, start_month, end_year=end_year, end_month=end_month, timeout=timeout)
     saved_articles = [download_article(article, '%s/%s.pdf' % (folder, bibcode, )) for bibcode, article in article_list]
-    summarise_articles(saved_articles, '%s/Summary_%s.pdf' % (folder, folder, ))
+    summarise_articles(saved_articles, '%s/summary.pdf' % (folder, folder, ))
 
-    email_article_summary(email_address, '%s/Summary_%s.pdf' % (folder, folder, ), start_year, start_month, end_year, end_month, len(article_list))
+    email_article_summary(email_address, '%s/summary.pdf' % (folder, folder, ), start_year, start_month, end_year, end_month, len(article_list))
 
 
 

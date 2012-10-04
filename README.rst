@@ -33,13 +33,15 @@ Feel free to change the following lines in paperboy.py:
 - ``FROM_ADDRESS = "Paperboy"``
 
 - ``ADMIN_ADDRESS = "acasey@mso.anu.edu.au"``
+  
   Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email
   too.
 
 - ``INSTITUTE_QUERY = [
-    "*mount stromlo observatory*", # or
-    "*research school of astronomy and astrophysics*"
-    ]``
+
+  ``  "*mount stromlo observatory*", # or
+  ``  "*research school of astronomy and astrophysics*"
+  ``  ]
 
 Usage Examples
 --------------

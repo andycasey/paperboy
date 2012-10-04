@@ -37,6 +37,12 @@ INSTITUTE_QUERY = [
     "*research school of astronomy and astrophysics*"
     ]
 ```
+
+```ruby
+require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+```
 Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email too.
 
 Usage Examples

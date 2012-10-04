@@ -28,20 +28,16 @@ University <http://rsaa.anu.edu.au/>`_
 
 Feel free to change the following lines in paperboy.py:
 
-- ``HOST = "mso.anu.edu.au"``
-
-- ``FROM_ADDRESS = "Paperboy"``
-
-- ``ADMIN_ADDRESS = "acasey@mso.anu.edu.au"``
-  
-  Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email
-  too.
-
-- ``INSTITUTE_QUERY = [
-
-  ``  "*mount stromlo observatory*", # or
-  ``  "*research school of astronomy and astrophysics*"
-  ``  ]
+```python
+HOST = "mso.anu.edu.au"
+FROM_ADDRESS = "Paperboy"
+ADMIN_ADDRESS = "acasey@mso.anu.edu.au"
+INSTITUTE_QUERY = [
+    "*mount stromlo observatory*", # or
+    "*research school of astronomy and astrophysics*"
+    ]
+```
+Note: Each time you run Paperboy the ``ADMIN_ADDRESS`` will get an email too.
 
 Usage Examples
 --------------

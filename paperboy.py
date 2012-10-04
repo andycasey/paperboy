@@ -1,6 +1,6 @@
-#!/usr/local/python-2.7.1/bin/python
-# Papyrboy written by Andy Casey (acasey@mso.anu.edu.au) on 14 Jun 2012
+# Paperboy written by Andy Casey (acasey@mso.anu.edu.au)
 # Please contact me before distributing or editing any of this code for uses which it was not intended for.
+
 import logging
 from datetime import datetime
 
@@ -25,11 +25,50 @@ from email.Utils import formatdate
 
 from pyPdf import PdfFileReader, PdfFileWriter
 
+# GLOBAL VARIABLES
+# Change these for a given institute
+HOST = "outgoing.mso.anu.edu.au"
+FROM_ADDRESS = "acasey@mso.anu.edu.au"
+ADMIN_ADDRESS = "arcasey@mit.edu"
+INSTITUTE_QUERY = [
+    "*mount stromlo observatory*",
+    "*research school of astronomy and astrophysics*"
+]
+
+# Don't change anything past here unless you're a Python wizard.
 
 def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=120):
     """Retrieves the bibliography codes and URLS for all peer-reviewed articles
-    published in the specified time frame with an affiliation from Mount Stromlo
-    Observatory / Research School of Astronomy & Astrophysics, ANU."""
+    published in the specified time frame from an institute.
+    
+    Inputs
+    ----
+    start_year : int
+        Year to start searching from, e.g., 2012.
+        
+    start_month : int
+        Month to start searching from between 1-12.
+    
+    end_year : int
+        Year to stop searching from (inclusive).
+    
+    end_month : int
+        Month to stop searching from between 1-12 (inclusive).
+        
+    timeout : int, optional
+        Number of seconds to wait before timing out the socket connection
+        
+    Raises
+    ----
+    ValueError
+        If the end date is before the start date, or the start date is in the
+        future.
+        
+    Returns
+    ----
+    articles : list containing tuples of length 2
+        Each tuple contains a bibliography code and the article URL.
+    """
     
     st = datetime(start_year, start_month, 1)
     et = datetime(end_year, end_month, monthrange(end_year, end_month)[1])
@@ -45,10 +84,23 @@ def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=
                  % (start_year, start_month, end_year, end_month, ))
     
     # Prepare the data for ADS    
+    affiliation = "%0D%0A".join(INSTITUTE_QUERY).replace(' ', '+') 
+    data = """db_key=AST&db_key=PRE&qform=AST&arxiv_sel=astro-ph&arxiv_sel=cond-
+    mat&arxiv_sel=cs&arxiv_sel=gr-qc&arxiv_sel=hep-ex&arxiv_sel=hep-lat&arxiv_se
+    l=hep-ph&arxiv_sel=hep-th&arxiv_sel=math&arxiv_sel=math-ph&arxiv_sel=nlin&ar
+    xiv_sel=nucl-ex&arxiv_sel=nucl-th&arxiv_sel=physics&arxiv_sel=quant-ph&arxiv
+    _sel=q-bio&sim_query=YES&ned_query=YES&adsobj_query=YES&aut_logic=OR&obj_log
+    ic=OR&author=&object=&start_mon=%i&start_year=%i&end_mon=%i&end_year=%i&ttl_
+    logic=OR&title=&txt_logic=OR&text=&kwd_logic=OR&keyword=&aff_req=YES&aff_log
+    ic=OR&affiliation=%s&nr_to_return=200&start_nr=1&jou_pick=NO&ref_stems=&data
+    _and=ALL&group_and=ALL&start_entry_day=&start_entry_mon=&start_entry_year=&e
+    nd_entry_day=&end_entry_mon=&end_entry_year=&min_score=&sort=SCORE&data_type
+    =SHORT&aut_syn=YES&txt_syn=YES&txt_syn=YES&aut_wt=1.0&obj_wt=1.0&ttl_wt=0.3&
+    txt_wt=3.0&aut_wgt=YES&obj_wgt=YES&ttl_wgt=YES&txt_wgt=YES&ttl_sco=YES&txt_s
+    co=YES&version=1&aff_syn=NO&aff_wt=1.0&aff_wgt=YES&kwd_sco=YES&kwd_syn=NO&kw
+    d_wt=1.0&kwd_wgt=YES&kwd_sco=YES""".replace('\n    ', '') \
+        % (start_month, start_year, end_month, end_year, affiliation, )
     
-    affiliation = "*mount stromlo observatory*\n*research school of astronomy and astrophysics*".replace("\n", "%0D%0A").replace(' ', '+') # TODO be more elegant
-    data = 'db_key=AST&db_key=PRE&qform=AST&arxiv_sel=astro-ph&arxiv_sel=cond-mat&arxiv_sel=cs&arxiv_sel=gr-qc&arxiv_sel=hep-ex&arxiv_sel=hep-lat&arxiv_sel=hep-ph&arxiv_sel=hep-th&arxiv_sel=math&arxiv_sel=math-ph&arxiv_sel=nlin&arxiv_sel=nucl-ex&arxiv_sel=nucl-th&arxiv_sel=physics&arxiv_sel=quant-ph&arxiv_sel=q-bio&sim_query=YES&ned_query=YES&adsobj_query=YES&aut_logic=OR&obj_logic=OR&author=&object=&start_mon=%i&start_year=%i&end_mon=%i&end_year=%i&ttl_logic=OR&title=&txt_logic=OR&text=&kwd_logic=OR&keyword=&aff_req=YES&aff_logic=OR&affiliation=%s&nr_to_return=200&start_nr=1&jou_pick=NO&ref_stems=&data_and=ALL&group_and=ALL&start_entry_day=&start_entry_mon=&start_entry_year=&end_entry_day=&end_entry_mon=&end_entry_year=&min_score=&sort=SCORE&data_type=SHORT&aut_syn=YES&txt_syn=YES&txt_syn=YES&aut_wt=1.0&obj_wt=1.0&ttl_wt=0.3&txt_wt=3.0&aut_wgt=YES&obj_wgt=YES&ttl_wgt=YES&txt_wgt=YES&ttl_sco=YES&txt_sco=YES&version=1&aff_syn=NO&aff_wt=1.0&aff_wgt=YES&kwd_sco=YES&kwd_syn=NO&kwd_wt=1.0&kwd_wgt=YES&kwd_sco=YES' \
-                % (start_month, start_year, end_month, end_year, affiliation, )
     host = 'http://adsabs.harvard.edu/cgi-bin/nph-abs_connect?' + data
     
     # Perform the query
@@ -61,13 +113,22 @@ def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=
     preprints = re.findall('href="\S+link_type=PREPRINT"', data)
     articles = re.findall('href="\S+link_type=ARTICLE"', data)
     
-    logging.info("Identified %i preprint links and %i article links." % (len(preprints), len(articles), ))
+    logging.info("Identified %i preprint links and %i article links." \
+                 % (len(preprints), len(articles), ))
+    
     if len(preprints) > len(articles):
         logging.info("Preprint links will be used wherever refereed article files are unavailable.")
-    
+        
     # Clean up the links
     preprints = [preprint.split('"')[1] for preprint in preprints]
     articles = [article.split('"')[1] for article in articles]
+   
+    logging.debug("Pre-prints:")
+    [logging.debug(preprint) for preprint in preprints]
+    
+    logging.debug("Article links:")
+    [logging.debug(article) for article in articles]
+    
     
     article_baselinks = [';'.join(article.split(';')[:-1]) for article in articles]
     
@@ -86,8 +147,8 @@ def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=
             # This will maintain chronological order of all the articles
             article_urls.append(articles[article_baselinks.index(link)])
             
-    # Clean up the links
-    article_urls = [article.replace('&#38;', '&') for article in article_urls] # TODO be more elegant
+    # Clean up the links [TODO] make this more elegant
+    article_urls = [article.replace('&#38;', '&') for article in article_urls] 
     
     # Extract bibcodes
     bibcodes = []
@@ -95,7 +156,8 @@ def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=
         bibcode = re.findall('(?<=bibcode=)\S+(?=&db_key)', article)
         
         if len(bibcode) is 0:
-            logging.warn("Could not find bibliography code from URL (%s). Assigning random string instead." % (article, ))
+            logging.warn("Could not find bibliography code from URL (%s)." \
+                       + "Assigning random string instead." % (article, ))
             bibcode = ''
         else: bibcode = bibcode[0].replace('%26', '&') # TODO be more elegant
         
@@ -108,13 +170,39 @@ def retrieve_article_urls(start_year, start_month, end_year, end_month, timeout=
 
 
 def download_article(article_url, output, clobber=True, timeout=120):
-    """Retrieves an article or pre-print PDF from ADS and saves it to disk."""
+    """Retrieves an article or pre-print PDF from ADS and saves it to disk.
+    
+    Inputs
+    ----
+    article_url : str
+        The URL of the article to retrieve.
+        
+    output : str
+        Output filename to save the article to.
+        
+    clobber : bool, optional
+        Whether to overwrite the file if the filename already exists.
+    
+    timout : int, optional
+        Amount of seconds to wait before timing out the socket connection.
+        
+    Raises
+    ----
+    ValueError
+        If an article URL is not from NASA ADS.
+        
+    IOError
+        If the filename provided exists but we've been told not to clobber it.
+    """
 
     if not article_url.startswith('http://adsabs.harvard.edu'):
-        raise ValueError('Expected an article URL that from ADS, but the URL did not start with http://adsabs.harvard.edu: "%s"' % (article_url, ))
+        raise ValueError('Expected an article URL that from ADS, but the URL ' \
+                       + 'did not start with http://adsabs.harvard.edu: "%s"' \
+                       % (article_url, ))
         
     if os.path.exists(output) and not clobber:
-        raise IOError('Filename exists (%s) and we will not clobber it.' % (article_url, ))
+        raise IOError('Filename exists (%s) and we will not clobber it.' \
+                      % (article_url, ))
     
     logging.info("Attempting to download article from %s" % (article_url, ))
     
@@ -125,13 +213,14 @@ def download_article(article_url, output, clobber=True, timeout=120):
     if handle.geturl().startswith('http://arXiv.org/'):
         # This is a pre-print URL, so we actually need to rget the real PDF
         real_article_url = handle.geturl().replace('/abs/', '/pdf/')
-        logging.info("This article is a preprint, so we are taking it from %s instead" % (real_article_url, ))
+        logging.info("This article is a preprint, so we are taking it from %s instead" \
+                     % (real_article_url, ))
         
         request = urllib2.Request(real_article_url)
         handle = urllib2.urlopen(request, timeout=timeout)
     
     elif handle.geturl().startswith('http://onlinelibrary.wiley.com'):
-        # Wiley have this annoying frame that we need to navigate through.
+        # Wiley has this annoying frame that we need to navigate through.
         
         data = handle.read()
         
@@ -154,7 +243,24 @@ def download_article(article_url, output, clobber=True, timeout=120):
 
 def summarise_articles(articles, output, clobber=True):
     """Collects the first page from all the article filenames provided and puts
-    them into a single PDF file."""
+    them into a single PDF file.
+    
+    Inputs
+    ----
+    articles : list of str
+        A list of PDF filenames to generate the summary file from.
+        
+    output : str
+        Output filename for the summary file.
+        
+    clobber : bool, optional
+        Whether to overwrite the output file if the filename already exists.
+        
+    Raises
+    ----
+    IOError
+        If the output filename provided exists but we've been told not to clobber it.
+    """
     
     if os.path.exists(output) and not clobber:
         raise IOError("Output file name exists (%s) and we've been told not to clobber it." % (output, ))
@@ -183,10 +289,45 @@ def summarise_articles(articles, output, clobber=True):
 
 def email_article_summary(to_address, summary_filename, start_year, start_month, end_year, end_month, num_articles):
     """Emails a summary file to the given address, with brief information about
-    the number of articles published by RSAA authors in the given time period."""
+    the number of articles published institute authors in a given time period.
     
-    from_address = "acasey@mso.anu.edu.au"
-    host = "mso.anu.edu.au"
+    Inputs
+    ----
+    to_address : str
+        E-mail address to send the article summary to.
+        
+    summary_filename : str
+        Filename where the output summary file is saved to.
+        
+    start_year : int
+        Year to start searching for article from, e.g. 2012
+        
+    start_month : int
+        Month to start searching for articles from, between 1-12.
+        
+    end_year : int
+        Inclusive year to stop searching for articles from.
+        
+    end_month : int
+        Inclusive month to stop searching for articles from.
+    
+    num_articles : int
+        Number of articles found in the given month.
+        
+    Notes
+    ----
+    start_year, start_month, end_year, end_month, and num_articles are required
+    for the email body because this information cannot be deduced from the
+    summary_filename PDF.
+    
+    Raises
+    ----
+    Exception
+        If there was some problem sending the email.
+    """
+    
+    host = HOST
+    from_address = FROM_ADDRESS
     body = """
             Good morning,
     
@@ -198,10 +339,9 @@ def email_article_summary(to_address, summary_filename, start_year, start_month,
             
             """ % (num_articles, start_month, start_year, end_month, end_year, )
             
-    recipients = [to_address, 'acasey@mso.anu.edu.au']
+    recipients = [to_address, ADMIN_ADDRESS]
     
     logging.info("Preparing summary email report for %s" % (', '.join(recipients), ))
-    
     
     successful = True
     for recipient in recipients:
@@ -239,8 +379,33 @@ def email_article_summary(to_address, summary_filename, start_year, start_month,
 
 def report_monthly_papers(email_address, start_year, start_month, end_year, end_month, timeout):
     """Retrieves all peer-reviewed papers authored or co-authored by researchers
-    at the Research School of Astronomy & Astrophysics in a given time frame, and
-    emails a paperboy/girl the first page of each peer-reviewed article."""
+    at a given institute in a given time frame, and emails a paperboy/girl the
+    first page of each peer-reviewed article.
+    
+    Inputs
+    ----
+    email_address : str
+        E-mail to send the montly report to.
+        
+    start_year : int
+        Year to start searching for articles from.
+    
+    start_month : int
+        Month to start searching for articles from, e.g. 1-12
+    
+    end_year : int
+        Inclusive month to stop searching for articles from.
+    
+    end_month : int
+        Inclusive month to stop searching for articles from.
+        
+    timeout : int
+        Number of seconds to wait before timing out the article retrival socket.
+        
+    Returns
+    ----
+    None
+    """
     
     start_year = int(start_year)
     start_month = int(start_month)
@@ -303,7 +468,10 @@ if __name__ == '__main__':
                 now = datetime.now()
                 month = now.month - 1
                 year = now.year if now.month != 12 else now.year - 1
-            
+                
+                setattr(namespace, 'end_month', month)
+                setattr(namespace, 'end_year', year)
+                
             elif values == "this":
                 now = datetime.now()
                 month, year = now.month, now.year
@@ -315,7 +483,7 @@ if __name__ == '__main__':
     
     
     
-    parser = argparse.ArgumentParser(prog="Paperboy", description="Retrieves recent peer-reviewed articles published by RSAA staff and emails them to a Paperboy.")
+    parser = argparse.ArgumentParser(prog="python paperboy.py", description="Retrieves recent peer-reviewed articles published by institute staff and emails a summary report.\n\nExample: python paperboy.py --to my@email.com --month last")
     
     #paperboy --month= --year= --to
     #month can be last, and then year is not necessary
